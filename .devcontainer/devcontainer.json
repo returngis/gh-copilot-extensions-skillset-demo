@@ -1,0 +1,18 @@
+// See https://containers.dev/implementors/json_reference/ for configuration reference
+{
+	"name": "GitHub Copilot Extension Skillset demo",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+"remoteUser": "node",
+"features": {
+	"ghcr.io/jckimble/devcontainer-features/ngrok:3": {}
+},
+"customizations": {
+	"vscode": {
+		"extensions": [
+			"humao.rest-client"
+		]
+	}
+}
+}
