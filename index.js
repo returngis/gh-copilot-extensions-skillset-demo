@@ -13,9 +13,9 @@ const PORT = process.env.PORT || 3000;
 
 /*
 * Inference Description:
-* This API retrieves Dragon Ball characters from an external API and returns the data in JSON format. 
-* Input: a JSON object with an optional parameter: howManyCharacters. 
-* Output: a JSON array with the details of the requested characters.
+This API retrieves Dragon Ball characters from an external API and returns the data in JSON format. 
+Input: a JSON object with an optional parameter: howManyCharacters. 
+Output: a JSON array with the details of the requested characters.
 */
 
 /* JSON schema
@@ -26,33 +26,32 @@ const PORT = process.env.PORT || 3000;
      "type": "number",     
       "description": "The number of Dragon Ball characters to retrieve"
     }
-  },
-  "required": []
+  }
 }
 */
 
 app.post('/dragonball', async (req, res) => {
 
-    console.log('Request body: ', req.body);
+  console.log('Request body: ', req.body);
 
-    const params = {
-        howManyCharacters: req.body.howManyCharacters || 5,
-    };
+  const params = {
+    howManyCharacters: req.body.howManyCharacters || 5,
+  };
 
-    let result = await fetch(`https://dragonball-api.com/api/characters?limit=${params.howManyCharacters}`);
+  let result = await fetch(`https://dragonball-api.com/api/characters?limit=${params.howManyCharacters}`);
 
-    result = await result.json();
+  result = await result.json();
 
-    res.json(result);
+  res.json(result);
 
 });
 
 
 /*
 * Inference Description:
-* This API retrieves Star Wars characters from an external API and returns the data in JSON format.
-* Input: a JSON object with an optional parameter: howManyCharacters.
-* Output: a JSON array with the details of the requested characters.
+This API retrieves Star Wars characters from an external API and returns the data in JSON format.
+Input: a JSON object with an optional parameter: howManyCharacters.
+Output: a JSON array with the details of the requested characters.
 */
 
 /* JSON schema
@@ -63,50 +62,34 @@ app.post('/dragonball', async (req, res) => {
      "type": "number",     
       "description": "The number of Star wars characters to retrieve"
     }
-  },
-  "required": []
+  }
 }
 */
 app.post('/starwars', async (req, res) => {
-    console.log('Request body: ', req.body);
+  console.log('Request body: ', req.body);
 
-    let characters = [];
-    let page = 1; //10 characters per page
+  let characters = [];
+  let page = 1; //10 characters per page
 
-    const params = {
-        howManyCharacters: req.body.howManyCharacters || 5,
-    };
+  const params = {
+    howManyCharacters: req.body.howManyCharacters || 5,
+  };
 
-    while (characters.length < params.howManyCharacters) {
-        let result = await fetch(`https://swapi.py4e.com/api/people/?page=${page}`);
-        result = await result.json();
-        characters = characters.concat(result.results);
+  while (characters.length < params.howManyCharacters) {
+    let result = await fetch(`https://swapi.py4e.com/api/people/?page=${page}`);
+    result = await result.json();
+    characters = characters.concat(result.results);
 
-        if (!result.next)
-            page++;
+    if (!result.next)
+      page++;
 
-        if (characters.length > params.howManyCharacters)
-            characters = characters.slice(0, params.howManyCharacters);
-    }
+    if (characters.length > params.howManyCharacters)
+      characters = characters.slice(0, params.howManyCharacters);
+  }
 
-    res.json(characters);
+  res.json(characters);
 
 });
-
-
-async function getUserInfoFromADO(username) {
-    const orgUrl = 'https://dev.azure.com/returngisorg';
-    let authHandler = azdev.getPersonalAccessTokenHandler(process.env.ADO_PAT);
-    let connection = new azdev.WebApi(orgUrl, authHandler);
-    const userApi = await connection.getUserApi();
-    const user = await userApi.getUser(username);
-
-    console.log(' ** User info: ', username);
-    console.log(user);
-
-    return user;
-}
-
 
 /*
 Retrieves the work items from Azure DevOps for a given project. Pass the GitHub handle as input, and the output will be the name of the work item, its state, 
@@ -130,53 +113,71 @@ the assignee, and a URL in this format: https://dev.azure.com/returngisorg/{proj
 */
 app.post('/ado', async (req, res) => {
 
-    console.log('Request body: ', req.body);
-    console.log('Request headers: ', req.headers);
+  console.log('Request body: ', req.body);
+  console.log('Request headers: ', req.headers);
 
-    const params = {
-        project: req.body.projectName,
-        username: req.body.username,
+  const params = {
+    project: req.body.projectName,
+    username: req.body.username,
 
-    };
+  };
 
 
-    const orgUrl = 'https://dev.azure.com/returngisorg';
+  const orgUrl = `https://dev.azure.com/${process.env.ADO_ORG}`;
 
-    let authHandler = azdev.getPersonalAccessTokenHandler(process.env.ADO_PAT);
+  let authHandler = azdev.getPersonalAccessTokenHandler(process.env.ADO_PAT);
 
-    let connection = new azdev.WebApi(orgUrl, authHandler);
+  let connection = new azdev.WebApi(orgUrl, authHandler);
 
-    const witApi = await connection.getWorkItemTrackingApi();    
-   
-    const projectApi = await connection.getCoreApi();
+  const witApi = await connection.getWorkItemTrackingApi();
 
-    projectApi.getProject(project).then((project) => {
-        console.log(project);
-    });
+  const projectApi = await connection.getCoreApi();
+
+  projectApi.getProject(params.project).then((project) => {
+    console.log(project);
+  });
+
+
+  let query;
+
+  // WIQL to obtain work items
+  if (params.username) {
+
+    console.log('The user asked for work items assigned to: ', params.username);
 
     const username_without_slug = params.username.replace(process.env.GITHUB_ENTERPRISE_SLUG, '');
     console.log(' ** username_without_slug: ', username_without_slug);
 
-    // WIQL to obtain work items
-    const query = {
-        query: `SELECT [System.Id], [System.Title], [System.State] FROM WorkItems WHERE [System.TeamProject] = '${params.project}' AND [System.AssignedTo] CONTAINS '${username_without_slug}'`,
+    query = {
+      query: `SELECT [System.Id], [System.Title], [System.State] FROM WorkItems WHERE [System.TeamProject] = '${params.project}' AND [System.AssignedTo] CONTAINS '${username_without_slug}'`,
     };
+  }
+  else {
 
-    const queryResult = await witApi.queryByWiql(query, { project });
+    console.log('The user asked for all work items');
 
-    // console.log(queryResult);
+    query = {
+      query: `SELECT [System.Id], [System.Title], [System.State] FROM WorkItems WHERE [System.TeamProject] = '${params.project}'`,
+    };
+  }
 
-    const workItemIds = queryResult.workItems.map(item => item.id);
+  console.log('The query is: ', query);
 
-    // Recuperar detalles de los work items
-    const workItems = await witApi.getWorkItems(workItemIds);
-    // console.log(workItems);
+  // Execute query
+  const queryResult = await witApi.queryByWiql(query, { project: params.project });
 
-    res.json(workItems);
+  // Get work item ids
+  const workItemIds = queryResult.workItems.map(item => item.id);
+
+  // Get work items
+  const workItems = await witApi.getWorkItems(workItemIds);
+
+  // Return work items
+  res.json(workItems);
 
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on ${PORT} 🚀`);
+  console.log(`Server is running on ${PORT} 🚀`);
 });
 
