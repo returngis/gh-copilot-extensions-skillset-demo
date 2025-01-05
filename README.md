@@ -38,14 +38,17 @@ que puedes generar con ellos:
 
 Puedes pedirle cosas como: 
 
-`@returngis-skillset generame un array con 10 personajes de Dragon Ball`
-`@returngis-skillset ahora mezclamelo con 10 personajes de Star Wars`
-`@returngis-skillset damelo en formato JSON con el nombre, el genero y la procedencia`
+- `@returngis-skillset generame un array con 10 personajes de Dragon Ball`
+
+- `@returngis-skillset ahora mezclamelo con 10 personajes de Star Wars`
+
+- `@returngis-skillset damelo en formato JSON con el nombre, el genero y la procedencia`
 
 Esto está muy bien para comprender cómo funciona el skillset y cómo podemos utilizarlo para generar datos de ejemplo para nuestras aplicaciones. 
 
 Si queremos llevarlo a un ejemplo más real, podemos utilizar el endpoint de Azure DevOps para recuperar los work items de un proyecto:
 
-`@returngis-skillset dame los work items del proyecto Tour-Of-Heroes de Azure DevOps`
-`@returngis-skillset ahora dame los work items de tipo To Do`
-`@returngis-skillset cuáles están asignados a mi`
+- `@returngis-skillset dame los work items del proyecto Tour-Of-Heroes de Azure DevOps`
+- `@returngis-skillset ahora dame los work items de tipo To Do`
+- `@returngis-skillset cuáles están asignados a mi`
+- `@returngis-skillset cuáles están asociados a Jon`
