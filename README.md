@@ -35,22 +35,28 @@ Hace ya tiempo te mostré cómo crear una extensión de GitHub Copilot en este o
 
 [![Cómo crear una extensión para GitHub Copilot Chat](images/Cómo%20crear%20GitHub%20Copilot%20Extensions.png)](https://youtu.be/8JRGNIuEKAQ)
 
-En ese momento solo había una forma de hacerlo que era crear el agente en su totalidad. Sin embargo, ahora podemos utilizar los skillsets para extender las capacidades de GitHub Copilot Extension de una forma más sencilla.
+En ese momento solo había una forma de hacerlo que era crear el agente en su totalidad, debes preocuparte del metaprompting, del RAG, etcétera. Sin embargo, ahora podemos utilizar los skillsets para extender las capacidades de GitHub Copilot Extension de una forma más sencilla. Simplemente podemos utilizar el agente que ya conocemos y pasarle una serie de endpoints con una descripción de los mismos para que pueda usarlos según le convenga. Este tipo se llama Skillset y para crearlo debes ir al apartado de `Settings`> `Developer Settings` > `GitHub Apps`> `New GitHub App` y llevar a cabo la siguiente configuración:
 
+- **GitHub App name**: El nombre de tu extensión. Es el que usarás cuando quieras interactuar con ella.
+- **Homepage URL**: La URL de tu aplicación. En mi ejemplo https://www.returngis.net
+- **Callback URL**: La URL de tu aplicación. En mi ejemplo https:/github.com
+- **Puedes ponerle un logo** si quieres, pero es opcional.
+- **Deshabilita la opción Webhook**
+- **Permissions**: A nivel `Account Permissions` hay que usar `Copilot Chat > Read-only`
 
-## ¿Qué hace este ejemplo?
+Una vez que guardes los cambios solo queda un paso más. En la sección que se llama `Copilot` en esta ocasión hay que elegir en el combo llamado `App Type` la que dice `Skillset`. Una vez que la selecciones podrás ver un apartado llamado `Skill definitions`donde podremos dar de alta los diferentes endpoints que queremos que GitHub Copilot tenga en cuenta cuando interactuemos con esta extensión.
 
-En este repositorio puedes encontrar dos ejemplos de endpoints para una GitHub Copilot Extension usando skillsets. En lugar de crear todo el agente, le damos al agente que ya existe de Github Copilot Extension la capacidad de poder llamar a nuestros endpoints. En este caso tenemos tres endpoints:
+## Endpoints de ejemplo
+
+Para este ejemplo he creado tres endpoints que forman parte de este repositorio.
 
 - `/dragonball`: Este endpoint devuelve información sobre los personajes de Dragon Ball.
 - `/starwars`: Este endpoint devuelve información sobre los personajes de Star Wars.
 - `/ado`: Este endpoint se conecta a Azure DevOps y es capaz de devolver los work items de un proyecto que se le pida.
 
-Con ellos puedo generar datos de ejemplo para mis aplicaciones. Estos son algunos de los ejemplos
+En cada uno de ellos puedes encontrar como comentario cuál sería el valor para el campo `Inference description`y el JSON Schema a poner en el campo `Parameters`. El nombe puede ser el que tú elijas y la URL será la que nos de Ngrok + el path de cada uno de los endpoints.
 
-que puedes generar con ellos:
-
-Puedes pedirle cosas como: 
+Una vez que ya tengas configurado todo esto, puedes pedirle cosas como: 
 
 - `@returngis-skillset generame un array con 10 personajes de Dragon Ball`
 
