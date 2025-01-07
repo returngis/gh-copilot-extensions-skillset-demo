@@ -68,7 +68,8 @@ Esto está muy bien para comprender cómo funciona el skillset y cómo podemos u
 
 Si queremos llevarlo a un ejemplo más real, podemos utilizar el endpoint de Azure DevOps para recuperar los work items de un proyecto:
 
-- `@returngis-skillset dame los work items del proyecto Tour-Of-Heroes de Azure DevOps`
+- `@returngis-skillset dame los work items del proyecto Tour-Of-Heroes`
 - `@returngis-skillset ahora dame los work items de tipo To Do`
 - `@returngis-skillset cuáles están asignados a mi`
 - `@returngis-skillset cuáles están asociados a Jon`
+- `@returngis-skillset y a Jaime`
